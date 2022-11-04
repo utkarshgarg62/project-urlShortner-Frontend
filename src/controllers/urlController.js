@@ -4,6 +4,8 @@ const urlModel = require("../model/urlModel")
 const redis = require("redis");
 const { promisify } = require("util");
 
+let baseUrl = "http://localhost:3000"
+
 //================================================[Connection for Redis]===========================================================
 
 //Connect to redis
@@ -13,7 +15,7 @@ const redisClient = redis.createClient(
     { no_ready_check: true }
 );
 redisClient.auth("y16dKTbIMtRh1IOz41hmOkfSWAKhY12N", function (err) {  //password
-  if (err) throw err;
+    if (err) throw err;
 });
 
 redisClient.on("connect", async function () {
@@ -29,19 +31,19 @@ const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 //==================================================[Api to Shorten Url]===========================================================
 
 const shortUrl = async function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
     try {
-        let baseUrl = "http://localhost:3000"
         let url = req.body.longUrl
 
-        if(Object.keys(req.body)==0 || !url || typeof(url)!="string") return res.status(400).send({status:false,message:"Please Provide Url"})
+        if (Object.keys(req.body) == 0 || !url || typeof (url) != "string") return res.status(400).send({ status: false, message: "Please Provide Url" })
 
-        url=url.trim()
+        url = url.trim()
 
         if (!validUrl.isWebUri(url)) return res.status(400).send({ status: false, message: "Invalid Url" })
 
-        let checkedUrl=await urlModel.findOne({longUrl:url}).select({ _id: 0, __v: 0 })
+        let checkedUrl = await urlModel.findOne({ longUrl: url }).select({ _id: 0, __v: 0 })
 
-        if(!checkedUrl){
+        if (!checkedUrl) {
             let urlCode = shortId.generate(url).toLowerCase()
             let shortUrl = baseUrl + "/" + urlCode
             const saveData = await urlModel.create({
@@ -52,7 +54,7 @@ const shortUrl = async function (req, res) {
             let saveData1 = await urlModel.findById(saveData._id).select({ _id: 0, __v: 0 })
             return res.status(201).send({ status: true, data: saveData1 })
         }
-        else{
+        else {
             return res.status(200).send({ status: true, data: checkedUrl })
         }
     }
@@ -67,20 +69,21 @@ module.exports.shortUrl = shortUrl
 
 
 const redirect = async function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         let urlCode = req.params.urlCode
-    
+
         let cachedData = await GET_ASYNC(`${urlCode}`)
-      
-        if(cachedData) {
-          let getLongUrl = JSON.parse(cachedData)
-          return res.redirect(302,getLongUrl.longUrl)
+
+        if (cachedData) {
+            let getLongUrl = JSON.parse(cachedData)
+            return res.redirect(302, getLongUrl.longUrl)
         } else {
             let urlData = await urlModel.findOne({ urlCode: urlCode })
             if (!urlData) return res.status(404).send({ status: false, message: "No url found" })
-            await SET_ASYNC(`${urlCode}`,3600, JSON.stringify(urlData))
+            await SET_ASYNC(`${urlCode}`, 3600, JSON.stringify(urlData))
             let longUrl = urlData.longUrl
-            return res.redirect(302,longUrl)
+            return res.redirect(302, longUrl)
         }
     }
     catch (err) {
