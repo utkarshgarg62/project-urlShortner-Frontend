@@ -4,7 +4,7 @@ const urlModel = require("../model/urlModel")
 const redis = require("redis");
 const { promisify } = require("util");
 
-let baseUrl = "http://localhost:3000"
+let baseUrl = "https://url-shortnerbackendapp.herokuapp.com"
 
 //================================================[Connection for Redis]===========================================================
 
