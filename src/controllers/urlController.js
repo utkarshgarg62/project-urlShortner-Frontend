@@ -4,7 +4,7 @@ const urlModel = require("../model/urlModel")
 const redis = require("redis");
 const { promisify } = require("util");
 
-let baseUrl = "https://url-shortnerbackendapp.herokuapp.com"
+let baseUrl = "https://blink.herokuapp.com"
 
 //================================================[Connection for Redis]===========================================================
 
@@ -31,7 +31,6 @@ const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 //==================================================[Api to Shorten Url]===========================================================
 
 const shortUrl = async function (req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         let url = req.body.longUrl
 
@@ -69,7 +68,6 @@ module.exports.shortUrl = shortUrl
 
 
 const redirect = async function (req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         let urlCode = req.params.urlCode
 
