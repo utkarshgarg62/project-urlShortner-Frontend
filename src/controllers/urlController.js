@@ -4,7 +4,7 @@ const urlModel = require("../model/urlModel")
 const redis = require("redis");
 const { promisify } = require("util");
 
-let baseUrl = "https://blink.up.railway.app/"
+let baseUrl = "https://blink.up.railway.app"
 
 //================================================[Connection for Redis]===========================================================
 
