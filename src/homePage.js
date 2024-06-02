@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./homePage.css";
 import axios from "axios";
 
-let api = `https://project-url-shortner-backend.vercel.app/url/shorten`;
+let api = `https://1nkk.vercel.app/url/shorten`;
 
 const HomePage = () => {
   const [longUrl, setLongUrl] = useState("");
