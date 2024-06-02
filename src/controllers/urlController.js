@@ -4,42 +4,35 @@ const urlModel = require("../model/urlModel")
 const redis = require("redis");
 const { promisify } = require("util");
 
-let baseUrl = "https://blink.up.railway.app"
+let baseUrl = "http://localhost:3000"
 
-//================================================[Connection for Redis]===========================================================
+// REDIS CONFIGURATION - 
+const REDIS_DATABASE_NAME = 'utkarshhgarg'
+const REDIS_DATABASE_PUBLIC_ENDPOINT = 'redis-15380.c212.ap-south-1-1.ec2.redns.redis-cloud.com';
+const REDIS_DATABASE_PORT = 15380;
+const REDIS_DATABASE_PASSWORD = 'utkarshhgarg_database';
 
-//Connect to redis
-const redisClient = redis.createClient(
-    14142,   //port
-    "redis-14142.c264.ap-south-1-1.ec2.cloud.redislabs.com",  //public endpoint
+const redisClient = redis.createClient(REDIS_DATABASE_PORT, REDIS_DATABASE_PUBLIC_ENDPOINT,
     { no_ready_check: true }
 );
-redisClient.auth("y16dKTbIMtRh1IOz41hmOkfSWAKhY12N", function (err) {  //password
+redisClient.auth(REDIS_DATABASE_PASSWORD, function (err) {
     if (err) throw err;
 });
-
 redisClient.on("connect", async function () {
-    console.log("Connected to Redis..");
+    console.log("Connected to Redis => " + REDIS_DATABASE_NAME);
 });
-
-
-
 const SET_ASYNC = promisify(redisClient.SETEX).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
-
-//==================================================[Api to Shorten Url]===========================================================
-
+// SHORTEN URL 
 const shortUrl = async function (req, res) {
     try {
+
         let url = req.body.longUrl
-
         if (Object.keys(req.body) == 0 || !url || typeof (url) != "string") return res.status(400).send({ status: false, message: "Please Provide Url" })
-
         url = url.trim()
 
         if (!validUrl.isWebUri(url)) return res.status(400).send({ status: false, message: "Invalid Url" })
-
         let checkedUrl = await urlModel.findOne({ longUrl: url }).select({ _id: 0, __v: 0 })
 
         if (!checkedUrl) {
@@ -63,16 +56,11 @@ const shortUrl = async function (req, res) {
 }
 module.exports.shortUrl = shortUrl
 
-
-//==================================================[Redirecting to LongUrl]===========================================================
-
-
+// REDIRECT URL
 const redirect = async function (req, res) {
     try {
         let urlCode = req.params.urlCode
-
         let cachedData = await GET_ASYNC(`${urlCode}`)
-
         if (cachedData) {
             let getLongUrl = JSON.parse(cachedData)
             return res.redirect(302, getLongUrl.longUrl)
