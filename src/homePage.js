@@ -44,7 +44,7 @@ const HomePage = () => {
                 className="button"
                 onClick={() => postData()}
               >
-                Make It Short
+                Submit
               </button>
             </div>
             <br></br>
@@ -60,7 +60,7 @@ const HomePage = () => {
           <div className="overlay">
             <div className="overlay-panel overlay-right">
               <h1>Hello, Friend!</h1>
-              <p>
+              <p className="p">
                 Created a Url shortening service like Bitly and tinyurl for easy
                 sharing of long urls, also implemented caching to deliver quick
                 responses.
