@@ -23,7 +23,6 @@ mongoose.connect(CLUSTER_URL, {
 
 app.use('/', route);
 
-
 app.listen(PORT, function () {
     console.log('Express Running on Port => ' + PORT)
 });
