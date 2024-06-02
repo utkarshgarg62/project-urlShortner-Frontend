@@ -4,7 +4,7 @@ const urlModel = require("../model/urlModel")
 const redis = require("redis");
 const { promisify } = require("util");
 
-let baseUrl = "https://1nk.vercel.app"
+let baseUrl = "https://1nkk.vercel.app"
 
 // REDIS CONFIGURATION - 
 const REDIS_DATABASE_NAME = 'utkarshhgarg'
