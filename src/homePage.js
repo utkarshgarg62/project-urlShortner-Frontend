@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "./homePage.css";
 import axios from "axios";
 
-let api = "https://blink.up.railway.app/url/shorten";
+let api = `http://localhost:5500/url/shorten`;
+
 const HomePage = () => {
   const [longUrl, setLongUrl] = useState("");
   const [result, setResult] = useState("");
