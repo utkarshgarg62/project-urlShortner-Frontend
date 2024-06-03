@@ -61,7 +61,7 @@ const HomePage = () => {
               {isLoading ? (
                   <div class="loader"></div> // Show loader while loading
               ) : (
-                result && <a href={result.shortUrl}>{result.shortUrl}</a>
+                result && <a href={result.shortUrl} target="_blank" rel="noreferrer" >{result.shortUrl}</a>
               )}
             </div>
           </div>
