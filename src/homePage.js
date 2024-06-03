@@ -7,19 +7,25 @@ let api = `https://1nkk.vercel.app/url/shorten`;
 const HomePage = () => {
   const [longUrl, setLongUrl] = useState("");
   const [result, setResult] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const postData = (e) => {
-    // e.preventDefault();
+    setIsLoading(true);  // Set loading to true when the request starts
     axios
       .post(api, {
         longUrl,
       })
       .then((res) => {
-        // console.log(res);
         setResult(res.data.data);
-        console.log(res.data.data);
+        setIsLoading(false);  // Set loading to false when the request completes
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);  // Set loading to false even if there's an error
       });
   };
+
   // console.log(result);
   return (
     <div>
@@ -43,6 +49,7 @@ const HomePage = () => {
                 type="button"
                 className="button"
                 onClick={() => postData()}
+                disabled={isLoading}  // Disable button while loading
               >
                 Submit
               </button>
@@ -51,7 +58,11 @@ const HomePage = () => {
             <br></br>
             <br></br>
             <div id="result">
-              <a href={result.shortUrl}>{result.shortUrl}</a>
+              {isLoading ? (
+                  <div class="loader"></div> // Show loader while loading
+              ) : (
+                result && <a href={result.shortUrl}>{result.shortUrl}</a>
+              )}
             </div>
           </div>
         </div>
@@ -79,11 +90,6 @@ const HomePage = () => {
           <a href="https://www.linkedin.com/in/utkarshgarg62/">
             Utkarsh Garg
           </a>{" "}
-          {/* and
-          <a href="https://www.linkedin.com/in/monisha-mittal-848581238/">
-            {" "}
-            Monisha Mittal{" "}
-          </a> */}
           - Read how I created this and you can see backend repository -
           <a href="https://github.com/utkarshgarg62/project-urlShortner">
             {" "}
@@ -94,6 +100,7 @@ const HomePage = () => {
       </footer>
     </div>
   );
+
 };
 
 export default HomePage;
