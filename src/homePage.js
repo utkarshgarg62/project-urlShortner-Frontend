@@ -22,6 +22,7 @@ const HomePage = () => {
       })
       .catch((error) => {
         console.error(error);
+        setResult(error.message)
         setIsLoading(false);  // Set loading to false even if there's an error
       });
   };
