@@ -26,17 +26,17 @@ const shortUrl = async function (req, res) {
         if (Object.keys(req.body) == 0 || !url || typeof url != 'string')
             return res
                 .status(400)
-                .send({ status: false, message: 'Please Provide Url' });
+                .send({ status: false, message: 'please enter a url' });
         url = url.trim();
 
         if (!validUrl.isWebUri(url))
-            return res.status(400).send({ status: false, message: 'Invalid Url' });
+            return res.status(400).send({ status: false, message: 'invalid url' });
         let checkedUrl = await urlModel
             .findOne({ longUrl: url })
             .select({ _id: 0, __v: 0 });
 
         if (!checkedUrl) {
-            let urlCode = shortId.generate(url).toLowerCase();
+            let urlCode = shortId.generate(url);
             let shortUrl = Host + '/' + urlCode;
             const saveData = await urlModel.create({
                 longUrl: url,
