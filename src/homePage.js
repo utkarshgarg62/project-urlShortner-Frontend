@@ -3,31 +3,40 @@ import "./homePage.css";
 import axios from "axios";
 
 let api = `https://1nkk.vercel.app/url/shorten`;
+// let api = `http://localhost:5500/url/shorten`;
 
 const HomePage = () => {
   const [longUrl, setLongUrl] = useState("");
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState("")
 
+  function copy() {
+    var copyText = document.getElementById("shortLink");
+    navigator.clipboard.writeText(copyText.value);
+    alert("Copied the text: " + copyText.value);
+  }
 
   const postData = (e) => {
-    setIsLoading(true);  // Set loading to true when the request starts
+    setIsError('')
+    setIsLoading(true);
     axios
       .post(api, {
         longUrl,
       })
       .then((res) => {
         setResult(res.data.data);
-        setIsLoading(false);  // Set loading to false when the request completes
+        setIsLoading(false);
       })
       .catch((error) => {
-        console.error(error);
-        setResult(error.message)
-        setIsLoading(false);  // Set loading to false even if there's an error
+        setIsError(error.response.data.message)
+        setInterval(() => {
+          setIsError('')
+        }, 4000);
+        setIsLoading(false);
       });
   };
 
-  // console.log(result);
   return (
     <div>
       <div className="container" id="container">
@@ -37,6 +46,12 @@ const HomePage = () => {
               <div>
                 <h1>Enter a long url</h1>
                 <span>to make it short</span>
+
+                <div id="error">
+                  {isError ? <div class="error-msg">
+                    <i class="fa fa-times-circle"></i> {isError}
+                  </div> : ''}
+                </div>
                 <input
                   id="input"
                   type="text"
@@ -50,7 +65,7 @@ const HomePage = () => {
                 type="button"
                 className="button"
                 onClick={() => postData()}
-                disabled={isLoading}  // Disable button while loading
+                disabled={isLoading}
               >
                 Submit
               </button>
@@ -60,11 +75,13 @@ const HomePage = () => {
             <br></br>
             <div id="result">
               {isLoading ? (
-                  <div class="loader"></div> // Show loader while loading
+                <div className="loader"></div>
               ) : (
-                result && <a href={result.shortUrl} target="_blank" rel="noreferrer" >{result.shortUrl}</a>
+                result &&
+                <textarea className="w-96 py-3 px-3 resize-none overflow-hidden rounded-lg border-2 border-slate-100" type="text" id="shortLink" value={result.shortUrl} placeholder="result" onClick={copy} readOnly></textarea>
               )}
             </div>
+
           </div>
         </div>
 
@@ -99,7 +116,7 @@ const HomePage = () => {
           .
         </p>
       </footer>
-    </div>
+    </div >
   );
 
 };
