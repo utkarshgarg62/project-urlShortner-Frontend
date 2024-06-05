@@ -3,7 +3,6 @@ const urlSchema = new mongoose.Schema({
     longUrl: {
         type: String,
         required: true,
-        lowercase: true,
         trim: true,
     },
     shortUrl: {
@@ -16,7 +15,6 @@ const urlSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowercase: true,
         trim: true,
     }
 });
